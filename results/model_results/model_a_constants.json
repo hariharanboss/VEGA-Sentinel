@@ -1,0 +1,48 @@
+{
+  "model_name": "Model A",
+  "model_type": "logistic_regression",
+  "trained_on": "dataset\\processed\\sentinel_window_features_v3.csv",
+  "windows_total": 107,
+  "windows_normal": 100,
+  "windows_abnormal": 7,
+  "cv_mean_accuracy_development": 0.9446428571428572,
+  "random_state": 42,
+  "feature_order": [
+    "humidity_mean",
+    "temp_mean",
+    "mq2_range",
+    "mq2_delta",
+    "mq2_std",
+    "humidity_std",
+    "flame_fraction"
+  ],
+  "scaler_mean": [
+    73.24289719626168,
+    28.44869158878505,
+    11.616822429906541,
+    0.48598130841121495,
+    3.73476075238112,
+    0.1153248165583287,
+    0.004672897196261682
+  ],
+  "scaler_scale": [
+    1.5485078795352631,
+    0.20302885993531775,
+    17.851225701949062,
+    14.173401761573603,
+    5.900504609424358,
+    0.16372475122113755,
+    0.031720678034536716
+  ],
+  "coefficients": [
+    -2.61023332642085,
+    0.4225382835612446,
+    0.38476846638473056,
+    -0.32206852022486093,
+    -0.7513917487442603,
+    0.5613558418779987,
+    0.8905126165409565
+  ],
+  "intercept": -3.4835602473329583,
+  "threshold": 0.5
+}
