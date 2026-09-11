@@ -1,0 +1,9 @@
+# VEGA Sentinel — Python dependencies (ML pipeline + tools)
+# Install: pip install -r requirements.txt
+# Python 3.9+ recommended. Firmware development uses Arduino IDE 1.8.19 (no pip deps).
+
+pandas>=1.5
+numpy>=1.23
+scikit-learn>=1.1
+matplotlib>=3.6
+pyserial>=3.5

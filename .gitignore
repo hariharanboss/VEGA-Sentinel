@@ -1,0 +1,52 @@
+# --- Secrets / credentials ---
+.env
+.env.*
+*.pem
+*.key
+*credentials*
+*secret*
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# --- IDE / editor artifacts ---
+.idea/
+.vscode/
+.vs/
+*.code-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# --- Arduino / embedded build artifacts ---
+*.hex
+*.bin
+*.elf
+*.map
+*.o
+*.d
+build*/
+.build/
+# Local COM-port / toolchain configuration (machine-specific)
+com_ports.local
+*.local
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- OS / temp files ---
+*.tmp
+*.log
+~$*
