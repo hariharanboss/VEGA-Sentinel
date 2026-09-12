@@ -1,4 +1,4 @@
-% ============================================================
+﻿% ============================================================
 % VEGA SENTINEL - Hackathon Project Report
 % EMBRIX'26 - VEGATHON 2026 | Track 2: Edge AI & TinyML Challenge
 % Team: Abnormal Detectors - SSNCE
@@ -40,16 +40,26 @@
 % ---------- caption setup ----------
 \captionsetup{font=small, labelfont=bf}
 
+% Give LaTeX extra stretch to avoid overfull lines
+\emergencystretch=1.5em
+
 % ---------- image helper: compiles with or without the image ----------
+% Tries PDF first (pdfTeX embeds PDFs natively - avoids libpng issues),
+% then PNG, and otherwise shows a labelled placeholder box.
 \newcommand{\reportimage}[2]{%
   \begin{center}
-    \IfFileExists{#1}{%
-      \includegraphics[width=#2\textwidth]{#1}%
+    \IfFileExists{#1.pdf}{%
+      \includegraphics[width=#2\textwidth]{#1.pdf}%
     }{%
-      \fbox{\parbox[c][4.5cm][c]{#2\textwidth}{\centering
-        \textbf{[ INSERT IMAGE HERE ]}\\[4pt]
-        Upload the file \texttt{\detokenize{#1}} to this Overleaf project,\\
-        or replace this box with \texttt{\textbackslash includegraphics}.}}%
+      \IfFileExists{#1.png}{%
+        \includegraphics[width=#2\textwidth]{#1.png}%
+      }{%
+        \fbox{\parbox[c][4.5cm][c]{#2\textwidth}{\centering
+          \textbf{[ INSERT IMAGE HERE ]}\\[4pt]
+          Upload \texttt{\detokenize{#1}.pdf} or \texttt{\detokenize{#1}.png}\\
+          to this Overleaf project, or replace this box\\
+          with {\ttfamily\char92 includegraphics}.}}%
+      }%
     }%
   \end{center}
 }
@@ -86,7 +96,7 @@
 \section{Team Members}
 % ============================================================
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \begin{tabular}{cl}
 \toprule
@@ -264,7 +274,7 @@ $\rightarrow$ \fbox{ACT}
 \section{Hardware Components}
 % ============================================================
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \begin{tabularx}{\textwidth}{c l c X}
 \toprule
@@ -282,7 +292,7 @@ $\rightarrow$ \fbox{ACT}
 \end{tabularx}
 \end{table}
 
-\reportimage{photo_components.jpg}{0.75}
+\reportimage{photo_components}{0.75}
 
 % ============================================================
 \section{Function of Components}
@@ -351,7 +361,7 @@ firmware issue where the window was shifted before validation.)
 \textbf{Features calculated} (over a 10-sample window,
 $\sim$22.5\,s):
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \begin{tabular}{cl}
 \toprule
@@ -377,7 +387,7 @@ distribution matches deployment.
 \section{Edge AI / TinyML Implementation}
 % ============================================================
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \begin{tabularx}{\textwidth}{l X}
 \toprule
@@ -421,7 +431,7 @@ reproducible from the repository; nothing fabricated).}
 The system classifies the operating condition and examines changing
 patterns to estimate a possibly developing abnormal condition.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
 \toprule
@@ -469,7 +479,7 @@ immediate local alert.
 \section{Circuit and Wiring}
 % ============================================================
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \begin{tabularx}{\textwidth}{l l l X}
 \toprule
@@ -498,7 +508,7 @@ reaches an analog pin directly --- the divider keeps A0 at or below
 2.5\,V; (3) a common ground across the board, all sensors and the
 buzzer supply is mandatory.
 
-\reportimage{schematic_circuit.jpg}{0.8}
+\reportimage{schematic_circuit}{0.8}
 
 % ============================================================
 \section{Software Implementation}
@@ -536,7 +546,7 @@ when required.
   \draw[arrow] (start) -- (init);
   \draw[arrow] (init) -- (read);
   \draw[arrow] (read) -- (valid);
-  \draw[arrow] (valid) -| node[lbl, above, pos=0.25]{No} (discard);
+  \draw[arrow] (valid) -| node[lbl, above, pos=0.25]{No} (discard.west);
   \draw[arrow] (discard.east) -- ++(5mm,0) |- (read.east);
   \draw[arrow] (valid) -- node[lbl, right=1mm]{Yes} (shift);
   \draw[arrow] (shift) -- (full);
@@ -544,13 +554,13 @@ when required.
   \draw[arrow] (full) -- node[lbl, right=1mm]{Yes} (feat);
   \draw[arrow] (feat) -- (infer);
   \draw[arrow] (infer) -- (th);
-  \draw[arrow] (th) -| node[lbl, above, pos=0.2]{No} (norm);
+  \draw[arrow] (th) -| node[lbl, above, pos=0.2]{No} (norm.west);
   \draw[arrow] (norm) |- (conf);
   \draw[arrow] (th) -- node[lbl, right=1mm]{Yes} (conf);
   \draw[arrow] (conf) -- (buz);
-  \draw[arrow, dashed] (buz.west) -- node[lbl, above]{repeat cycle} ++(-8mm,0) |- (read.west);
 \end{tikzpicture}
-\caption{Firmware flowchart (one monitoring cycle).}
+\caption{Firmware flowchart (one monitoring cycle; the cycle repeats
+from \emph{Read sensors}).}
 \end{figure}
 
 % ============================================================
@@ -632,17 +642,18 @@ void processWindowClassification(bool abnormal)
     \texttt{analogRead}, \texttt{micros}); the DHT22 driver is
     self-contained bit-banged code and the model is plain C/C++
     arithmetic.
-  \item \textbf{PC pipeline (training/data tools):}
-    \texttt{pandas}, \texttt{numpy}, \texttt{scikit-learn},
-    \texttt{matplotlib}, \texttt{pyserial}.
+  \item \textbf{PC pipeline (training/data tools):} \texttt{pandas},
+    \texttt{numpy}, \texttt{scikit-learn}, \texttt{matplotlib},
+    \texttt{pyserial}.
 \end{itemize}
 
 % ============================================================
 \section{Code Explanation}
 % ============================================================
 \begin{description}
-  \item[Initialization:] serial at 115200 baud; GPIO0/1 configured;
-    GPIO2 set OUTPUT and LOW (buzzer off); analog input A0.
+  \item[Initialization:] serial at 115200 baud; GPIO0 and GPIO1
+    configured; GPIO2 set as output, LOW (buzzer off); A0 analog
+    input.
   \item[Sensor reading:] DHT22 via the bit-banged one-wire driver with
     checksum verification ($\geq$2\,s between reads); MQ-2 as a single
     \texttt{analogRead} (raw counts); flame via
@@ -672,7 +683,7 @@ Testing verified sensor readings, classification behaviour, and alert
 response under normal and selected \emph{safe, supervised} abnormal
 conditions.
 
-\begin{table}[h]
+\begin{table}[ht]
 \centering
 \scriptsize
 \begin{tabularx}{\textwidth}{c X X X}
@@ -709,22 +720,22 @@ $\rightarrow$ windowing $\rightarrow$ on-board AI $\rightarrow$
 confirmation $\rightarrow$ alarm) works on hardware. Final real-world
 performance is not yet validated; dataset expansion is in progress.
 
-\reportimage{vega_sentinel_mq2_comparison.png}{0.85}
+\reportimage{vega_sentinel_mq2_comparison}{0.85}
 \captionof{figure}{MQ-2 sensor response comparison across sessions.}
-\reportimage{vega_sentinel_flame_incident.png}{0.85}
+\reportimage{vega_sentinel_flame_incident}{0.85}
 \captionof{figure}{Flame-trial incident analysis.}
 
 % ============================================================
 \section{Project Output}
 % ============================================================
 
-\reportimage{photo_output_1.jpg}{0.8}
+\reportimage{photo_output_1}{0.8}
 \captionof{figure}{VEGA SENTINEL output / test photograph 1.}
 
-\reportimage{photo_output_2.jpg}{0.8}
+\reportimage{photo_output_2}{0.8}
 \captionof{figure}{VEGA SENTINEL output / test photograph 2.}
 
-\reportimage{photo_output_3.jpg}{0.8}
+\reportimage{photo_output_3}{0.8}
 \captionof{figure}{VEGA SENTINEL output / test photograph 3.}
 
 % ============================================================
@@ -802,7 +813,7 @@ the system.
 \textbf{Project video link:} \underline{\hspace{5cm}} \textit{(to be
 added)}
 
-\reportimage{video_qr_screenshot.png}{0.45}
+\reportimage{video_qr_screenshot}{0.45}
 
 % ============================================================
 \section{Conclusion}
